@@ -1,0 +1,6 @@
+[*]
+indent_size = 2
+intent_style = space
+
+[Makefile]
+indent_style = tab

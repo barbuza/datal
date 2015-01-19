@@ -1,0 +1,20 @@
+{
+  "name": "datal",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "description": "Mising data storage for react apps",
+  "scripts": {
+    "prepublish": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/barbuza/datal.git"
+  },
+  "peerDependencies": {
+    "immutable": "^3.6.2"
+  },
+  "devDependencies": {
+    "jest-cli": "^0.2.1",
+    "typescript": "^1.4.1"
+  }
+}
