@@ -10,12 +10,12 @@ class DataLayer implements Layer {
   newEntities:Entities;
 
   constructor(data:any, idKey:string = 'id') {
-    var newEntities = Immutable.Map<Ref, Entity>();
+    var newEntities = Immutable.Map<Ref, Entity>().asMutable();
     function traverse(item:any):any {
       if ((item instanceof Immutable.Map) && item.has(idKey) ) {
         var ref = new Ref(item.get(idKey));
         item = item.map(traverse);
-        newEntities = newEntities.set(ref, item);
+        newEntities.set(ref, item);
         return ref;
       } else if (item instanceof Immutable.Iterable) {
         return item.map(traverse);
@@ -23,7 +23,7 @@ class DataLayer implements Layer {
       return item;
     }
     traverse(Immutable.fromJS(data));
-    this.newEntities = newEntities
+    this.newEntities = newEntities.asImmutable();
   }
 
   apply(entities:Entities):Entities {

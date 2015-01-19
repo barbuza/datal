@@ -21,8 +21,9 @@ describe('Storage', function() {
     var storage = new Storage();
     var l1 = storage.addLayer(new DataLayer({id: '1', foo: 'bar'}));
     storage.addLayer(new DataLayer({id: '1', spam: 'eggs'}));
+    storage.addLayer(new DataLayer({id: '1', bar: 'foo'}));
     l1.remove();
-    expect(storage.get('1').toJS()).toEqual({id: '1', spam: 'eggs'});
+    expect(storage.get('1').toJS()).toEqual({id: '1', spam: 'eggs', bar: 'foo'});
   });
 
 });

@@ -8,10 +8,6 @@ import LayerHandle = require('./LayerHandle');
 import Layer = require('./Layer');
 
 
-function applyLayer(entities:Entities, layer:Layer):Entities {
-  return layer.apply(entities);
-}
-
 function callListener(listener:() => void) {
   listener();
 }
@@ -22,11 +18,15 @@ class Storage {
 
   private entities = empty;
   private cache = empty.asMutable();
-  private layers = Immutable.OrderedSet<Layer>();
+  private layers = Immutable.List<Layer>();
   private listeners = Immutable.Set<() => void>();
+  private layersCache = Immutable.List<Entities>();
 
   private notify():void {
-    var entities = this.layers.reduce(applyLayer, empty);
+    var layersCacheSize = this.layersCache.size;
+    var newLayers = this.layers.slice(layersCacheSize);
+    var entities = newLayers.reduce(this.applyLayer, this.layersCache.last() || empty, this);
+
     if (!Immutable.is(entities, this.entities)) {
       this.entities = entities;
       this.cache = empty.asMutable();
@@ -34,20 +34,30 @@ class Storage {
     }
   }
 
+  private applyLayer(entities:Entities, layer:Layer):Entities {
+    entities = layer.apply(entities);
+    this.layersCache = this.layersCache.push(entities);
+    return entities;
+  }
+
   public adopt(data:any):LayerHandle {
     return this.addLayer(new DataLayer(data));
   }
 
   public addLayer(layer:Layer):LayerHandle {
-    this.layers = this.layers.add(layer);
+    this.layers = this.layers.push(layer);
     var handle = new LayerHandle(layer, this);
     this.notify();
     return handle;
   }
 
   public removeLayer(layer:Layer):void {
-    this.layers = this.layers.remove(layer);
-    this.notify();
+    var index = this.layers.indexOf(layer);
+    if (index !== -1) {
+      this.layersCache = this.layersCache.slice(0, index).toList();
+      this.layers = this.layers.remove(index);
+      this.notify();
+    }
   }
 
   public addListener(listener:() => void):void {
