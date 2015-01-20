@@ -3,7 +3,7 @@ import Entities = require('./Entities');
 
 class FunctionLayer implements Layer {
 
-  fn:(entities:Entities) => Entities;
+  private fn:(entities:Entities) => Entities;
 
   constructor(fn:(entities:Entities) => Entities) {
     this.fn = fn;

@@ -7,7 +7,7 @@ import Layer = require('./Layer');
 
 class DataLayer implements Layer {
 
-  newEntities:Entities;
+  private newEntities:Entities;
 
   constructor(data:any, idKey:string = 'id') {
     var newEntities = Immutable.Map<Ref, Entity>().asMutable();

@@ -10,7 +10,7 @@ class LayerHandle {
     this.storage = storage;
   }
 
-  public remove():void {
+  remove():void {
     this.storage.removeLayer(this.layer);
   }
 }

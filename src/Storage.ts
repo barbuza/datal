@@ -40,18 +40,18 @@ class Storage {
     return entities;
   }
 
-  public adopt(data:any):LayerHandle {
+  adopt(data:any):LayerHandle {
     return this.addLayer(new DataLayer(data));
   }
 
-  public addLayer(layer:Layer):LayerHandle {
+  addLayer(layer:Layer):LayerHandle {
     this.layers = this.layers.push(layer);
     var handle = new LayerHandle(layer, this);
     this.notify();
     return handle;
   }
 
-  public removeLayer(layer:Layer):void {
+  removeLayer(layer:Layer):void {
     var index = this.layers.indexOf(layer);
     if (index !== -1) {
       this.layersCache = this.layersCache.slice(0, index).toList();
@@ -60,15 +60,15 @@ class Storage {
     }
   }
 
-  public addListener(listener:() => void):void {
+  addListener(listener:() => void):void {
     this.listeners = this.listeners.add(listener);
   }
 
-  public removeListener(listener:() => void):void {
+  removeListener(listener:() => void):void {
     this.listeners = this.listeners.remove(listener);
   }
 
-  public get(ref:any):Entity {
+  get(ref:any):Entity {
     if (typeof ref === 'string') {
       ref = new Ref(ref);
     }
@@ -76,7 +76,7 @@ class Storage {
       if (!this.entities.has(ref)) {
         return null;
       }
-      var traverse = function(item:any):any {
+      var traverse = (item:any):any => {
         if (item instanceof Ref) {
           var entity:Entity;
           if (this.cache.has(item)) {
@@ -90,10 +90,18 @@ class Storage {
           return item.map(traverse);
         }
         return item;
-      }.bind(this);
+      };
       traverse(ref);
     }
     return this.cache.get(ref);
+  }
+
+  has(ref:any, ...fields:Array<string>):boolean {
+    var entity = this.get(ref);
+    if (!entity) {
+      return false;
+    }
+    return fields.every((name:string) => entity.has(name));
   }
 
 }

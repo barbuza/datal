@@ -18,3 +18,11 @@ exports.remove = function(test) {
   test.deepEqual(storage.get('1').toJS(), {id: '1', spam: 'eggs', bar: 'foo'});
   test.done();
 };
+
+exports.has = function(test) {
+  var storage = new Storage();
+  storage.addLayer(new DataLayer({id: '1', foo: 'bar', spam: 'eggs'}));
+  test.ok(!storage.has('1', 'foo', 'bar'));
+  test.ok(storage.has('1', 'foo', 'spam'));
+  test.done();
+};
