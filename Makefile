@@ -1,10 +1,16 @@
-TS_FILES := $(wildcard src/*.ts)
+export PATH := ./node_modules/.bin:$(PATH)
 
-lib/index.js: $(TS_FILES)
-	./node_modules/typescript/bin/tsc -m commonjs --outDir lib --removeComments $^
+datal.js: index.ts
+	PATH=$$PATH tsc -m commonjs --sourceMap -d --removeComments $^
 
 clean:
-	rm -f $(TS_FILES:src/%.ts=lib/%.js)
+	rm -rf datal.js datal.js.map datal.d.ts dist
 
-test: lib/index.js
-	./node_modules/.bin/nodeunit tests
+test: datal.js
+	PATH=$$PATH nodeunit tests
+
+browser:
+	mkdir -p dist
+	PATH=$$PATH browserify -g uglifyify -s datal index.ts -p tsify --target=ES5 -d | exorcist dist/datal.browser.min.js.map > dist/datal.browser.min.js
+
+release: datal.js test browser browser

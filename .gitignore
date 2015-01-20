@@ -4,3 +4,8 @@
 /datal.iml
 /datal.ipr
 /datal.iws
+/src/.sublimets
+/dist
+/index.js
+/index.d.ts
+/index.js.map
